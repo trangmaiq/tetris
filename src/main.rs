@@ -9,6 +9,9 @@ use sdl2::render::{TextureCreator, Texture, Canvas};
 use sdl2::rect::Rect;
 use sdl2::video::{Window, WindowContext};
 use sdl2::image::{INIT_PNG, INIT_JPG, LoadTexture};
+use std::io;
+use std::fs::File;
+use std::io::Write;
 
 const TEXTURE_SIZE: u32 = 32;
 
@@ -133,4 +136,44 @@ fn create_square_texture_rect<'a>(
         }).expect("failed to color a texture");
         Some(square_texture)
     } else { None }
+}
+
+fn slice_to_string(slice: &[u32]) -> String {
+    slice
+        // Here we create an iterator from our slice
+        // A really important and fundamental thing to note about iterators is in Rust;
+        // they're lazy.
+        // Create an iterator doesn't cost anything more than the size of type.
+        // (generally a structure containing a pointer and an index).
+        // Until the next() method is called, nothing happens.
+        .iter()
+        // We call the iterator's map method.
+        // What it does is simple: it converts the current type into another one.
+        // Really important to note: at this point, the iterator still hasn't done anything/
+        // Keep in mid that nothing is done util the next() method is called.
+        .map(|highscore| highscore.to_string())
+        // And now we call the collect() method.
+        // It'll call the next() method of our iterator as long as
+        // it didn't get all elements and store them into a Vec.
+        // This is where map() method will be called on every element of out iterator
+        .collect::<Vec<String>>()
+        // And finally the last step: This method (as its name indicates) joins all the elements
+        // of the Vec into a String separated by the given &str (so, " " in our case).
+        .join(" ")
+}
+
+fn save_highscores_and_lines(highscores: &[u32], number_of_lines: &[u32]) -> bool {
+    let s_highscores = slice_to_string(highscores);
+    let s_number_of_lines = slice_to_string(number_of_lines);
+
+    // The is_ok() method call just informs the caller of the save_highscores_and_lines() function
+    // if everything has been saved as expected or not.
+    write_into_file(format!("{}\n{}\n", s_highscores,
+                            s_number_of_lines).as_ref(), "scores.txt").is_ok()
+}
+
+fn write_into_file(content: &str, filename: &str) -> io::Result<()> {
+    // try! marco can be replaced with ? operator
+    let mut f = File::create(filename)?;
+    f.write_all(content.as_bytes())
 }
