@@ -8,3 +8,9 @@ edition = "2018"
 
 [dependencies]
 sdl2 = "0.30.0"
+
+[features]
+# default means that by default, the following features ("sdl2/image") will be enabled.
+# sdl2/image means: sdl2 refers to the crate where we want to enable a feature
+# and image is the feature we want to enable
+default = ["sdl2/image"]

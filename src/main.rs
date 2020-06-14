@@ -8,6 +8,7 @@ use std::time::{Duration, SystemTime};
 use sdl2::render::{TextureCreator, Texture, Canvas};
 use sdl2::rect::Rect;
 use sdl2::video::{Window, WindowContext};
+use sdl2::image::{INIT_PNG, INIT_JPG, LoadTexture};
 use std::io;
 use std::fs::File;
 use std::io::Write;
@@ -24,6 +25,10 @@ fn main() {
     let video_subsystem = sdl_context
         .video()
         .expect("could not get video subsystem");
+
+    sdl2::image::init(INIT_PNG | INIT_JPG)
+        .expect("could not initialize image context");
+
     let window = video_subsystem
         .window("rust-sdl2 demo video", 800, 600)
         // position_centered gets the window in the middle of the screen
@@ -58,6 +63,9 @@ fn main() {
         TextureColor::GreenR73G196B137,
         TEXTURE_SIZE).expect("failed to create green square texture");
 
+    let image_texture = texture_creator
+        .load_texture("assets/rust_does_not_compile.png").expect("could not load image");
+
     let timer = SystemTime::now();
 
     let mut event_pump = sdl_context.
@@ -78,27 +86,29 @@ fn main() {
         canvas.set_draw_color(Color::RGB(156, 40, 8));
         canvas.clear();
 
-        let display_green = match timer.elapsed() {
-            Ok(elapsed) => elapsed.as_secs() % 2 == 0,
-            Err(_) => {
-                // in case of error, currently, we do nothing
-                true
-            }
-        };
+        canvas.copy(&image_texture, None, None).expect("render failed");
 
-        let square_texture = if display_green {
-            &green_square_texture
-        } else {
-            &blue_square_texture
-        };
-
-        canvas
-            .copy(
-                &square_texture,
-                None,
-                Rect::new(0, 0, TEXTURE_SIZE, TEXTURE_SIZE),
-            )
-            .expect("could not copy texture into window");
+        // let display_green = match timer.elapsed() {
+        //     Ok(elapsed) => elapsed.as_secs() % 2 == 0,
+        //     Err(_) => {
+        //         // in case of error, currently, we do nothing
+        //         true
+        //     }
+        // };
+        //
+        // let square_texture = if display_green {
+        //     &green_square_texture
+        // } else {
+        //     &blue_square_texture
+        // };
+        //
+        // canvas
+        //     .copy(
+        //         &square_texture,
+        //         None,
+        //         Rect::new(0, 0, TEXTURE_SIZE, TEXTURE_SIZE),
+        //     )
+        //     .expect("could not copy texture into window");
         canvas.present();
 
         // we sleep enough to get ~60fps. If we don't call this, the program will take
