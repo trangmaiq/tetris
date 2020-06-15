@@ -11,7 +11,7 @@ use sdl2::video::{Window, WindowContext};
 use sdl2::image::{INIT_PNG, INIT_JPG, LoadTexture};
 use std::io;
 use std::fs::File;
-use std::io::Write;
+use std::io::{Write, Read};
 
 const TEXTURE_SIZE: u32 = 32;
 
@@ -176,4 +176,33 @@ fn write_into_file(content: &str, filename: &str) -> io::Result<()> {
     // try! marco can be replaced with ? operator
     let mut f = File::create(filename)?;
     f.write_all(content.as_bytes())
+}
+
+fn line_to_slice(line: &str) -> Vec<u32> {
+    line.split(" ").filter_map(|nb| nb.parse::<u32>().ok()).collect()
+}
+
+fn load_highscores_and_lines() -> Option<(Vec<u32>, Vec<u32>)> {
+    if let Ok(content) = read_from_file("scores.txt") {
+        let mut lines = content.splitn(2, "\n").map(|line|
+            line_to_slice(line)).collect::<Vec<_>>();
+        if lines.len() == 2 {
+            let (number_lines, highscores) = (lines.pop().unwrap(),
+                                              lines.pop().unwrap());
+            Some((highscores, number_lines))
+        } else {
+            None
+        }
+    } else {
+        None
+    }
+}
+
+// This time, it only tales a filename as an argument
+// and returns a String if the reading was successful.
+fn read_from_file(filename: &str) -> io::Result<String> {
+    let mut f = File::open(filename)?;
+    let mut content = String::new();
+    f.read_to_string(&mut content)?;
+    Ok(content)
 }
