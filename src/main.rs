@@ -12,6 +12,9 @@ use sdl2::image::{INIT_PNG, INIT_JPG, LoadTexture};
 use std::io;
 use std::fs::File;
 use std::io::{Write, Read};
+use sdl2::version::version;
+
+mod tetrimino;
 
 const TEXTURE_SIZE: u32 = 32;
 
