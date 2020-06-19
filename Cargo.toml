@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 sdl2 = "0.30.0"
+rand = "0.3"
 
 [features]
 # default means that by default, the following features ("sdl2/image") will be enabled.
