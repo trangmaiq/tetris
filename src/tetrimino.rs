@@ -7,7 +7,7 @@ extern crate rand;
 struct Tetrimino {
     states: Vec<Vec<Vec<u8>>>,
     x: isize,
-    y: isize,
+    y: usize,
     current_state: u8,
 }
 
