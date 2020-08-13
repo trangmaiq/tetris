@@ -4,7 +4,7 @@ extern crate rand;
 // using matrix rotation or storing the different states.
 // To have a code that easy to read and update, I picked the second option,
 // but it'd nice to try using matrix later, it could help to learn a lot of things.
-struct Tetrimino {
+pub(crate) struct Tetrimino {
     states: Vec<Vec<Vec<u8>>>,
     x: isize,
     y: usize,
@@ -33,7 +33,7 @@ impl Tetrimino {
             if self.test_position(game_map, tmp_state as usize, self.x + x, self.y) == true {
                 self.current_state = tmp_state;
                 self.x += *x;
-                break
+                break;
             }
         }
     }
@@ -77,7 +77,7 @@ impl Tetrimino {
                     && (y + decal_y >= game_map.len()
                     || x < 0
                     || x as usize >= game_map[y + decal_y].len()
-                    ||game_map[y + decal_y][x as usize] != 0
+                    || game_map[y + decal_y][x as usize] != 0
                 ) {
                     return false;
                 }
@@ -87,23 +87,23 @@ impl Tetrimino {
     }
 }
 
-trait TetriminoGenerator {
+pub trait TetriminoGenerator {
     fn new() -> Tetrimino;
 }
 
-struct TetriminoI;
+pub(crate) struct TetriminoI;
 
-struct TetriminoJ;
+pub(crate) struct TetriminoJ;
 
-struct TetriminoL;
+pub(crate) struct TetriminoL;
 
-struct TetriminoO;
+pub(crate) struct TetriminoO;
 
-struct TetriminoS;
+pub(crate) struct TetriminoS;
 
-struct TetriminoZ;
+pub(crate) struct TetriminoZ;
 
-struct TetriminoT;
+pub(crate) struct TetriminoT;
 
 impl TetriminoGenerator for TetriminoI {
     fn new() -> Tetrimino {
@@ -293,11 +293,11 @@ fn create_new_tetrimino() -> Tetrimino {
     static mut PREV: u8 = 7;
     let mut rand_nb = rand::random::<u8>() % 7;
 
-    if unsafe {PREV} == rand_nb {
+    if unsafe { PREV } == rand_nb {
         rand_nb = rand::random::<u8>() % 7;
     }
 
-    unsafe {PREV = rand_nb; }
+    unsafe { PREV = rand_nb; }
 
     match rand_nb {
         0 => TetriminoI::new(),

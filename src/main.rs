@@ -16,12 +16,48 @@ use sdl2::version::version;
 
 mod tetrimino;
 
+use tetrimino::*;
+
 const TEXTURE_SIZE: u32 = 32;
 
 enum TextureColor {
     BlueR60G136B207,
     GreenR73G196B137,
 }
+
+// Tetris will hold all the game's information:
+// - Game map
+// - Current level
+// - Score
+// - Number of lines
+// - The current tetrimino
+// - Some potential other information ( such as a ghost, or the preview of the next tetrimino )
+struct Tetris {
+    game_map: Vec<Vec<u8>>,
+    current_level: u32,
+    score: u32,
+    nb_lines: u32,
+    current_piece: Option<Tetrimino>,
+}
+
+impl Tetris {
+    fn new() -> Tetris {
+        let mut game_map = Vec::new();
+        // We know that a `tetris` map has a width of 10 blocks and a height of 16 blocks.
+        // This loop create our game map by looping over the number of lines
+        // and generating an empty vector of 10 blocks, which will be a line.
+        for _ in 0..16 {
+            game_map.push(vec![0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+        }
+        // Apart of game map, everything else is very straightforward
+        Tetris {
+            game_map,
+            current_level: 1,
+            score: 0,
+            nb_lines: 0,
+            current_piece: None,
+        }
+    }
 
 fn main() {
     let sdl_context = sdl2::init().expect("SDL initialization failed");
